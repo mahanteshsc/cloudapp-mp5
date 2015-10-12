@@ -15,7 +15,6 @@ import org.apache.spark.mllib.tree.RandomForest;
 
 
 
-
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
@@ -46,19 +45,22 @@ public final class RandomForestMP {
 
 		// TODO
         JavaRDD<LabeledPoint> train = sc.textFile(training_data_path).map(new DataToPoint());
-        JavaRDD<LabeledPoint> test = sc.textFile(training_data_path).map(new DataToPoint());
+//        JavaRDD<LabeledPoint> test = sc.textFile(training_data_path).map(new DataToPoint());
+
+        JavaRDD<String> lines  = sc.textFile(training_data_path);
+        JavaRDD<Vector> test = lines.map(new ParsePoint());
 
         model =  RandomForest.trainClassifier(train, numClasses,
         		  categoricalFeaturesInfo, numTrees, featureSubsetStrategy, impurity, maxDepth, maxBins,
         		  seed);
         
-        JavaRDD<Vector> results = test.map(new Function<LabeledPoint, Vector>() {
-            public Vector call(LabeledPoint points) {
-                return (points.features());
-            }
-        });
+//        JavaRDD<Vector> results = test.map(new Function<LabeledPoint, Vector>() {
+//            public Vector call(LabeledPoint points) {
+//                return (points.features());
+//            }
+//        });
         
-        JavaRDD<LabeledPoint> results2 = results.map(new Function<Vector, LabeledPoint>() {
+        JavaRDD<LabeledPoint> results = test.map(new Function<Vector, LabeledPoint>() {
             public LabeledPoint call(Vector points) {
                 return new LabeledPoint(model.predict(points), points);
             }
@@ -99,6 +101,19 @@ public final class RandomForestMP {
                 point[i] = Double.parseDouble(tok[i]);
             }
             return new LabeledPoint(label, Vectors.dense(point));
+        }
+    }
+
+    private static class ParsePoint implements Function<String, Vector> {
+        private static final Pattern SPACE = Pattern.compile(",");
+
+        public Vector call(String line) {
+            String[] tok = SPACE.split(line);
+            double[] point = new double[tok.length-1];
+            for (int i = 1; i < tok.length; ++i) {
+                point[i-1] = Double.parseDouble(tok[i]);
+            }
+            return Vectors.dense(point);
         }
     }
 
