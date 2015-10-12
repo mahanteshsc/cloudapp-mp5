@@ -12,10 +12,6 @@ import org.apache.spark.mllib.clustering.KMeansModel;
 import org.apache.spark.mllib.linalg.Vector;
 import org.apache.spark.mllib.linalg.Vectors;
 
-import KMeansExample.ClusterCars;
-import KMeansExample.ParsePoint;
-import KMeansExample.ParseTitle;
-import KMeansExample.PrintCluster;
 import scala.Tuple2;
 
 
