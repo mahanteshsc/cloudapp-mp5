@@ -79,8 +79,8 @@ public final class RandomForestMP {
             String[] tok = SPACE.split(line);
             double label = Double.parseDouble(tok[tok.length-1]);
             double[] point = new double[tok.length-1];
-            for (int i = 1; i < tok.length ; ++i) {
-                point[i-1] = Double.parseDouble(tok[i]);
+            for (int i = 0; i < tok.length - 1; ++i) {
+                point[i] = Double.parseDouble(tok[i]);
             }
             return new LabeledPoint(label, Vectors.dense(point));
         }
@@ -92,8 +92,8 @@ public final class RandomForestMP {
         public Vector call(String line) {
             String[] tok = SPACE.split(line);
             double[] point = new double[tok.length-1];
-            for (int i = 1; i < tok.length; ++i) {
-                point[i-1] = Double.parseDouble(tok[i]);
+            for (int i = 0; i < tok.length-1; ++i) {
+                point[i] = Double.parseDouble(tok[i]);
             }
             return Vectors.dense(point);
         }
